@@ -1,0 +1,62 @@
+{
+ "properties": {
+  "displayName": "SQL servers should be configured with 90 days auditing retention or higher.",
+  "policyType": "BuiltIn",
+  "mode": "Indexed",
+  "description": "SQL servers should be configured with 90 days auditing retention or higher.",
+  "metadata": {
+   "version": "2.0.0",
+   "category": "SQL"
+  },
+  "parameters": {
+   "effect": {
+    "type": "String",
+    "metadata": {
+     "displayName": "Effect",
+     "description": "Enable or disable the execution of the policy"
+    },
+    "allowedValues": [
+     "AuditIfNotExists",
+     "Disabled"
+    ],
+    "defaultValue": "AuditIfNotExists"
+   }
+  },
+  "policyRule": {
+   "if": {
+    "allOf": [
+     {
+      "field": "type",
+      "equals": "Microsoft.Sql/servers"
+     },
+     {
+      "field": "kind",
+      "notContains": "analytics"
+     }
+    ]
+   },
+   "then": {
+    "effect": "[parameters('effect')]",
+    "details": {
+     "type": "Microsoft.Sql/servers/auditingSettings",
+     "name": "default",
+     "existenceCondition": {
+      "anyOf": [
+       {
+        "field": "Microsoft.Sql/servers/auditingSettings/retentionDays",
+        "equals": 0
+       },
+       {
+        "field": "Microsoft.Sql/servers/auditingSettings/retentionDays",
+        "greaterOrEquals": 90
+       }
+      ]
+     }
+    }
+   }
+  }
+ },
+ "id": "/providers/Microsoft.Authorization/policyDefinitions/89099bee-89e0-4b26-a5f4-165451757743",
+ "type": "Microsoft.Authorization/policyDefinitions",
+ "name": "89099bee-89e0-4b26-a5f4-165451757743"
+}
